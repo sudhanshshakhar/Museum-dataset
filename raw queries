@@ -1,0 +1,15 @@
+select * from (select museum.museum_id, museum.name as museum_name, work.name as 'painting name', work.work_id from museum inner join work on museum.museum_id=work.museum_id) where museum_id is null
+Error Code: 1248. Every derived table must have its own alias
+Catch- Every derived table (AKA sub-query) must have an alias. I.e. each query in brackets must be given an alias (AS whatever), which can be used to refer to it in the rest of the outer query.
+
+select * from (select museum.museum_id, museum.name as museum_name, work.name as 'painting name', work.work_id from museum inner join work on museum.museum_id=work.museum_id) as temp where museum_id is null;
+
+Other query- 
+select * from (select museum.museum_id, museum.name as museum_name, work.name as 'painting name', work.work_id from museum inner join work on museum.museum_id=work.museum_id) as temp where museum_id= 43;
+
+select museum.museum_id, museum.name as museum_name, work.name as 'painting name', work.work_id from museum inner join work on museum.museum_id=work.museum_id;
+
+select * from (select museum.museum_id, museum.name as museum_name, work.name as 'painting_name', work.work_id from museum inner join work on museum.museum_id=work.museum_id) as temp where 'painting_name' is null;
+
+select * from (select museum.museum_id, museum.name as museum_name, work.name as 'painting_name', work.work_id from museum inner join work on museum.museum_id=work.museum_id) as temp where painting_name= 'Still Life with Flowers and a Watch';
+
