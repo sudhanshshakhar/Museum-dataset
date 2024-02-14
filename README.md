@@ -2,7 +2,7 @@
 <p> <h3>This is a demo project for a museum painting dataset and I'll evaluate the following requirements with SQL queries.</h3> 
 <li> Fetch all paintings which are not displayed in any museum </li>
 <li>Are there any museums without paintings</li>
-<li>How many paintings have an asking price of more than regular price</li>
+<li>How many paintings have an asking price of less than regular price</li>
 <li>Identify paintings whose asking price is less than 50% of their regular price </li>
 <li>Which canvas size cost most</li>
 <li>Delete duplicate records from work, product-size, subject, and image link tables</li>
