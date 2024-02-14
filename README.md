@@ -20,3 +20,31 @@
 <li>Which country has 5th highest no. of paintings</li>
 <li>Which are the 3 most popular and 3 least popular painting styles?</li>
 <li>Which artist has the most no. of painting outside the USA? Display the artist's name, no. of painting, and the artist's nationality.</li>
+
+<h1>Schema<h2>
+<h2>List of Column Names from all tables </h2>
+
+<b>artist</b>- 
+artist_id , full_name , first_name , middle_names , last_name , nationality ,style , birth , death
+
+<b>canvas_size</b>- 
+size_id , width , height , label
+
+<b>image_link</b>- 
+work_id , url , thumbnail_small_url , thumbnail_large_url
+
+<b>museum</b>- 
+museum_id , name , address , city , state , postal , country , phone , url
+
+<b>museum_hours</b>- 
+museum_id , day , open , close
+
+<b>product_size</b>- 
+work_id , size_id , sale_price , regular_price
+
+<b>subject</b>- 
+work_id , subject
+
+<b>work</b>- 
+work_id , name , artist_id , style , museum_id
+
