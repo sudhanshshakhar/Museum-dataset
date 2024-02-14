@@ -1,10 +1,21 @@
+select * from artist;
+select * from canvas_size;
+select * from image_link;
+select * from museum;
+select * from museum_hours;
+select * from product_size;
+select * from subject;
+select * from work;
+
+select museum.museum_id, museum.name as museum_name, work.name as 'painting_name', work.work_id from museum inner join work on museum.museum_id=work.museum_id;
+
 select * from (select museum.museum_id, museum.name as museum_name, work.name as 'painting name', work.work_id from museum inner join work on museum.museum_id=work.museum_id) where museum_id is null
-Error Code: 1248. Every derived table must have its own alias
-Catch- Every derived table (AKA sub-query) must have an alias. I.e. each query in brackets must be given an alias (AS whatever), which can be used to refer to it in the rest of the outer query.
+#Error Code: 1248. Every derived table must have its own alias
+#Catch- Every derived table (AKA sub-query) must have an alias. I.e. each query in brackets must be given an alias (AS whatever), which can be used to refer to it in the rest of the outer query.
 
 select * from (select museum.museum_id, museum.name as museum_name, work.name as 'painting name', work.work_id from museum inner join work on museum.museum_id=work.museum_id) as temp where museum_id is null;
 
-Other query- 
+#Other query- 
 select * from (select museum.museum_id, museum.name as museum_name, work.name as 'painting name', work.work_id from museum inner join work on museum.museum_id=work.museum_id) as temp where museum_id= 43;
 
 select museum.museum_id, museum.name as museum_name, work.name as 'painting name', work.work_id from museum inner join work on museum.museum_id=work.museum_id;
@@ -12,4 +23,18 @@ select museum.museum_id, museum.name as museum_name, work.name as 'painting name
 select * from (select museum.museum_id, museum.name as museum_name, work.name as 'painting_name', work.work_id from museum inner join work on museum.museum_id=work.museum_id) as temp where 'painting_name' is null;
 
 select * from (select museum.museum_id, museum.name as museum_name, work.name as 'painting_name', work.work_id from museum inner join work on museum.museum_id=work.museum_id) as temp where painting_name= 'Still Life with Flowers and a Watch';
+
+select * from product_size where sale_price < regular_price; #paintings have an asking price of less than the regular price
+select count(work_id) from product_size; #total records/rows/numbers of product
+select count(work_id) from product_size where sale_price < regular_price; #How many paintings have an asking price of less than the regular price 
+
+select * from product_size where sale_price<= 0.5*regular_price; #Identify paintings whose asking price is less than 50% of their regular price
+select count(work_id) from product_size where sale_price<= 0.5*regular_price; #count of paintings whose asking price is less than 50% of their regular price
+
+select product_size.size_id, product_size.sale_price, product_size.regular_price, canvas_size.width,canvas_size.height,canvas_size.label
+from product_size inner join canvas_size on product_size.size_id=canvas_size.size_id;
+
+select max(regular_price) from product_size;
+
+select max(regular_price), size_id from product_size group by size_id;
 
