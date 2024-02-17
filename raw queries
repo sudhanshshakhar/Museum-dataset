@@ -9,24 +9,24 @@ select * from work;
 
 select museum.museum_id, museum.name as museum_name, work.name as 'painting_name', work.work_id from museum inner join work on museum.museum_id=work.museum_id;
 
-select * from (select museum.museum_id, museum.name as museum_name, work.name as 'painting name', work.work_id from museum inner join work on museum.museum_id=work.museum_id) where museum_id is null
-#Error Code: 1248. Every derived table must have its own alias
+select * from (select museum.museum_id, museum.name as museum_name, work.name as 'painting_name', work.work_id from museum inner join work on museum.museum_id=work.museum_id) as temp where museum_id is null; 
+
 #Catch- Every derived table (AKA sub-query) must have an alias. I.e. each query in brackets must be given an alias (AS whatever), which can be used to refer to it in the rest of the outer query.
 
-select * from (select museum.museum_id, museum.name as museum_name, work.name as 'painting name', work.work_id from museum inner join work on museum.museum_id=work.museum_id) as temp where museum_id is null;
+#select * from (select museum.museum_id, museum.name as museum_name, work.name as 'painting name', work.work_id from museum inner join work on museum.museum_id=work.museum_id) as temp where museum_id is null;
 
 #Other query- 
 select * from (select museum.museum_id, museum.name as museum_name, work.name as 'painting name', work.work_id from museum inner join work on museum.museum_id=work.museum_id) as temp where museum_id= 43;
 
-select museum.museum_id, museum.name as museum_name, work.name as 'painting name', work.work_id from museum inner join work on museum.museum_id=work.museum_id;
+#select museum.museum_id, museum.name as museum_name, work.name as 'painting name', work.work_id from museum inner join work on museum.museum_id=work.museum_id;
 
 select * from (select museum.museum_id, museum.name as museum_name, work.name as 'painting_name', work.work_id from museum inner join work on museum.museum_id=work.museum_id) as temp where 'painting_name' is null;
 
-select * from (select museum.museum_id, museum.name as museum_name, work.name as 'painting_name', work.work_id from museum inner join work on museum.museum_id=work.museum_id) as temp where painting_name= 'Still Life with Flowers and a Watch';
+select * from (select museum.museum_id, museum.name as museum_name, work.name as 'painting_name', work.work_id from museum inner join work on museum.museum_id=work.museum_id) as temp where painting_name= "Still Life with Flowers and a Watch";
 
-select * from product_size where sale_price < regular_price; #paintings have an asking price of less than the regular price
-select count(work_id) from product_size; #total records/rows/numbers of product
-select count(work_id) from product_size where sale_price < regular_price; #How many paintings have an asking price of less than the regular price 
+select * from product_size where sale_price < regular_price; #paintings have an asking price of less than regular price
+select count(work_id) from product_size; #in CSV 110347 records are present here 110135.seems all records not imported how to check and fix it
+select count(work_id) from product_size where sale_price < regular_price; #How many paintings have an asking price of less than regular price
 
 select * from product_size where sale_price<= 0.5*regular_price; #Identify paintings whose asking price is less than 50% of their regular price
 select count(work_id) from product_size where sale_price<= 0.5*regular_price; #count of paintings whose asking price is less than 50% of their regular price
@@ -35,6 +35,82 @@ select product_size.size_id, product_size.sale_price, product_size.regular_price
 from product_size inner join canvas_size on product_size.size_id=canvas_size.size_id;
 
 select max(regular_price) from product_size;
+select regular_price, work_id from product_size;
+select max(regular_price) as highest_price, work_id from product_size; #will not work
 
 select max(regular_price), size_id from product_size group by size_id;
+
+select artist_id, full_name, nationality, count(*) as cnt from artist
+group by artist_id, full_name, nationality;
+select artist_id, full_name, nationality, count(*) as cnt from artist
+group by artist_id, full_name, nationality having count(*)>1; #artist table name has no dupe
+select artist_id, count(*) as cnt from artist group by artist_id having count(*)>1; #artist table name has no dupe
+select size_id, count(*) as cnt from canvas_size group by size_id having count(*)>1; #canvas_size table name has no dupe 
+select work_id, url, count(*) as cnt from image_link group by work_id, url having count(*)>1;
+select museum_id, name, count(*) as cnt from museum group by museum_id, name having count(*)>0; 
+select museum_id, name, count(*) as cnt from museum group by museum_id, name;
+select museum_id, day, count(*) as cnt from museum_hours group by museum_id, day having count(*)>1;
+select work_id, size_id, sale_price regular_prize, count(*) as cnt from product_size group by work_id, size_id, sale_price, regular_prize having count(*)>1; 
+select work_id, subject, count(*) as cnt from subject group by work_id, subject having count(*)>1; 
+select work_id, name, artist_id, style, museum_id, count(*) as cnt from work group by work_id, name, artist_id, style, museum_id having count(*)>1;
+
+#invalid city name museum
+select museum_id, name, city from museum ; #incorrect
+
+
+select subject, count(*) as cnt from subject group by subject having count(*);
+select subject, count(*) as cnt from subject group by subject having count(*) order by count(*) DESC;
+select subject, count(*) as cnt from subject group by subject having count(*) order by count(*) DESC limit 10;
+select subject, max(cnt) from (select subject, count(*) as cnt from subject group by subject having count(*)) as temp group by subject cnt; #not working
+select subject, max(cnt) from (select subject, count(*) as cnt from subject group by subject having count(*) as temp) group by subject; #not working
+select subject, max(cnt) from (select subject, count(*) as cnt from subject group by subject having count(*) as temp) group by subject order by cnt DESC; #not working
+
+
+#museum which open sunday or monday
+select museum_id from museum_hours where day in ('Monday','Sunday');
+select count(museum_id) from museum_hours where day in ('Monday','Sunday');
+select museum.name, museum.city from museum inner join museum_hours on museum.museum_id = museum_hours.museum_id where museum_hours.day in ('Monday','Sunday');
+
+#museum which open sunday and monday
+select museum_id from museum_hours where (day='Sunday') and (day='Monday');  #will not work due to there is no row for day sunday and monday
+select museum_id from museum_hours id1 where day='Sunday' and exists (select * from museum_hours id2 where id2.museum_id=id1.museum_id and id2.day='Monday'); #we can ignore id1 and id2 and use simple name instead but we are using here id1, id2 for clarification snd remove ambiguity since here we are quering both time in single table so it's imp. otherwise somethimes it's gives error 
+select count(museum_id) from ( select museum_id from museum_hours id1 where day='Sunday' and exists (select * from museum_hours id2 where id2.museum_id=id1.museum_id and id2.day='Monday')) as cnt_museum_open_Sun_Mon;
+
+select museum.museum_id, museum.name, museum.city from museum inner join (select museum_id from museum_hours id1 where day='Sunday' and exists (select * from museum_hours id2 where id2.museum_id=id1.museum_id and id2.day='Monday') on museum.museum_id=museum_hours.museum_id); #incorrect 
+select museum.museum_id, museum.name, museum.city from museum inner join museum_hours on museum.museum_id=museum_hours.museum_id where day='Sunday' and exists (select * from museum_hours id2 where id2.museum_id=id1.museum_id and id2.day='Monday'); #will not work...join issue and syntax and where issue
+select museum_hours.museum_id, museum.name as 'museum_name', museum.city from museum_hours join museum on museum_hours.museum_id=museum.museum_id where day='Sunday' and exists (select * from museum_hours id2 where id2.museum_id=museum_hours.museum_id and id2.day='Monday');
+
+select museum_id from museum_hours group by museum_id having count(distinct day)=7;
+select museum_id, count(*) from museum_hours group by museum_id having count(distinct day)=7;
+select count(museum_id) from (select museum_id, count(*) from museum_hours group by museum_id having count(distinct day)=7) as museum_open_allday;
+
+select name, count(*) as cnt from work group by name having count(*);
+select max(cnt) from (select name, count(*) as cnt from work group by name having count(*)) as most_paintings;
+#add painting name in above query
+select name, count(*) as cnt from work group by name having count(*) order by cnt DESC limit 5; #famous painting depends on no. of painting
+
+select artist_id, count(*) from work group by artist_id having count(*);
+select artist_id, count(*) from work group by artist_id having count(*) order by count(*) DESC;
+select artist_id, count(*) from work as fam_artist group by artist_id having count(*) order by count(*) DESC limit 5;
+select artist.artist_id, artist.full_name, artist.nationality, fam_artist.count1 from artist join (select artist_id, count(*) as count1 from work group by artist_id having count(*) order by count(*) DESC limit 5) as fam_artist on artist.artist_id=fam_artist.artist_id;
+
+select size_id, count(*) from product_size group by size_id order by count(*) DESC;
+
+select canvas_size.size_id, canvas_size.width, canvas_size.height, canvas_size.label, popular_size.cnt from canvas_size right join
+(select size_id, count(*) as cnt from product_size group by size_id order by count(*) DESC) as popular_size 
+on canvas_size.size_id=popular_size.size_id;
+select canvas_size.size_id, canvas_size.width, canvas_size.height, canvas_size.label, popular_size.cnt from canvas_size right join
+(select size_id, count(*) as cnt from product_size group by size_id order by count(*) DESC) as popular_size 
+on canvas_size.size_id=popular_size.size_id limit 5;
+
+
+#difference between right join and inner join 
+select canvas_size.size_id, canvas_size.width, canvas_size.height, canvas_size.label, popular_size.cnt from canvas_size right join
+(select size_id, count(*) as cnt from product_size group by size_id order by count(*) DESC) as popular_size 
+on canvas_size.size_id=popular_size.size_id;
+select canvas_size.size_id, canvas_size.width, canvas_size.height, canvas_size.label, popular_size.cnt from canvas_size inner join
+(select size_id, count(*) as cnt from product_size group by size_id order by count(*) DESC) as popular_size 
+on canvas_size.size_id=popular_size.size_id;
+#here for count by decreasing order can be done by right join it can be done by join/inner join but addition steps needs to be taken
+#ofcourse based on previous query
 
