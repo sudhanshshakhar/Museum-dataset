@@ -114,3 +114,15 @@ on canvas_size.size_id=popular_size.size_id;
 #here for count by decreasing order can be done by right join it can be done by join/inner join but addition steps needs to be taken
 #ofcourse based on previous query
 
+
+select open, close, str_to_date(open, '%h:%i%a') as open_n, str_to_date(close, '%h:%i%p') as close_n from museum_hours; #incorrect, find error
+desc museum_hours;
+select *, str_to_date(open, '%h:%i:%p') as open_n, str_to_date(close, '%h:%i:%p') as close_n from museum_hours;
+select *, close_n-open_n as duration from (select *, str_to_date(open, '%h:%i:%p') as open_n, str_to_date(close, '%h:%i:%p') as close_n from museum_hours) as museum_hours_n;
+select *, timediff(close_n, open_n) as duration from (select *, str_to_date(open, '%h:%i:%p') as open_n, str_to_date(close, '%h:%i:%p') as close_n from museum_hours) as museum_hours_n;
+select museum_id, timediff(close_n, open_n) as duration from (select *, str_to_date(open, '%h:%i:%p') as open_n, str_to_date(close, '%h:%i:%p') as close_n from museum_hours) as museum_hours_n order by duration DESC;
+select m.museum_id, m.name, m.city, t.duration from museum as m left join (select *, timediff(close_n, open_n) as duration from (select *, str_to_date(open, '%h:%i:%p') as open_n, str_to_date(close, '%h:%i:%p') as close_n from museum_hours) as museum_hours_n order by duration DESC) as t on 
+m.museum_id=t.museum_id;
+-- m= museum table, t=museum hour table
+select m.museum_id, m.name, m.city, t.duration from museum as m left join (select *, timediff(close_n, open_n) as duration from (select *, str_to_date(open, '%h:%i:%p') as open_n, str_to_date(close, '%h:%i:%p') as close_n from museum_hours) as museum_hours_n order by duration DESC) as t on 
+m.museum_id=t.museum_id limit 10;
