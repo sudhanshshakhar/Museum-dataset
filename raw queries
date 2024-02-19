@@ -169,9 +169,32 @@ SET sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));
 
 
 select w.name, m.country, m.museum_id, count(m.country) as cnt from work as w join museum as m on
-w.museum_id=m.museum_id group by m.museum_id order by cnt desc; #paintings count
+w.museum_id=m.museum_id group by m.museum_id order by cnt desc; #paintings count....error -issue 'ONLY_FULL_GROUP_BY', can resolve by SET sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));
 
 #Which country has 5th highest no. of paintings - get paintings from work and join museum through museum_id and group by country desc order then apply condition 
-
 select m.country, count(m.country) as cnt from work as w join museum as m on
-w.museum_id=m.museum_id group by country order by cnt desc;
+w.museum_id=m.museum_id group by country order by cnt desc limit 1 offset 4;  -- will offset/nullfy 4 
+
+-- check the use of limit and offset
+select m.country, count(m.country) as cnt from work as w join museum as m on w.museum_id=m.museum_id group by country order by cnt desc limit 5;  -- top 5
+select m.country, count(m.country) as cnt from work as w join museum as m on w.museum_id=m.museum_id group by country order by cnt desc limit 5 offset 4; -- from 5th highest to 5th i.e. 5th to 10th
+
+#Which are the 3 most popular and 3 least popular painting styles?
+select style, count(*) from work where style!='' group by style;
+
+select style, count(*) as cnt from work where style!='' group by style order by cnt desc limit 3;  #popular painting style
+select style, count(*) as cnt from work where style!='' group by style order by cnt limit 3;  #least fav painting style
+
+-- Which artist has the most no. of painting outside the USA? Display the artist's name, no. of painting, and the artist's nationality.
+select * from work; 
+select * from museum;
+select * from artist;
+ 
+ select a.full_name as artist_n, count(a.full_name) as no_of_painting from work as w join museum as m on
+w.museum_id=m.museum_id join artist as a on
+a.artist_id=w.artist_id group by a.full_name order by artist_n;  #this is including USA
+
+
+select w.artist_id, w.museum_id, w.name as painting_n, m.country, a.full_name as artist_n from work as w join museum as m on
+w.museum_id=m.museum_id join artist as a on
+a.artist_id=w.artist_id where country!='USA' order by artist_n; #having only outside USA paintings
