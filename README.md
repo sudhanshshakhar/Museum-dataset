@@ -1,4 +1,3 @@
-<h2> # Demo Projects</h2>
 <p> <h3>This is a demo project for a museum painting dataset and I'll evaluate the following requirements with SQL queries.</h3> 
 <li> Fetch all paintings which are not displayed in any museum </li>
 <li>Are there any museums without paintings</li>
