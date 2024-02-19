@@ -126,3 +126,52 @@ m.museum_id=t.museum_id;
 -- m= museum table, t=museum hour table
 select m.museum_id, m.name, m.city, t.duration from museum as m left join (select *, timediff(close_n, open_n) as duration from (select *, str_to_date(open, '%h:%i:%p') as open_n, str_to_date(close, '%h:%i:%p') as close_n from museum_hours) as museum_hours_n order by duration DESC) as t on 
 m.museum_id=t.museum_id limit 10;
+
+-- alter table museum_hours drop column open_time, drop column close_time;  #dropped 2 column which made for date time calc.
+
+-- Identify the artist whose paintings are displayed in multiple countries
+select * from artist;
+select * from museum;
+select * from work;
+
+select museum.museum_id, museum.country, museum.name as museum_name , work.artist_id, work.name as work_n, artist.full_name as artist_name from museum join work on
+museum.museum_id=work.museum_id join artist on
+work.artist_id=artist.artist_id;
+
+select museum.museum_id, museum.country, museum.name as museum_name , work.artist_id, work.name as work_n, artist.full_name as artist_name from museum join work on
+museum.museum_id=work.museum_id join artist on
+work.artist_id=artist.artist_id;
+
+
+select artist_name, count(distinct country) as d_count from (select museum.museum_id, museum.country, museum.name as museum_name , work.artist_id, work.name as work_n, artist.full_name as artist_name from museum join work on
+museum.museum_id=work.museum_id join artist on 
+work.artist_id=artist.artist_id) as fam_artist group by artist_name order by d_count desc;
+
+-- check table
+select museum.museum_id, museum.country, museum.name as museum_name , work.artist_id, work.name as work_n, artist.full_name as artist_name from museum join work on
+museum.museum_id=work.museum_id join artist on
+work.artist_id=artist.artist_id
+where  artist.full_name='Claude Monet';   #Here artist_name='Claude Monet' will not work since join and where clause condition in same/main query
+
+select artist_name, count(distinct country) as c_country from (select museum.museum_id, museum.country, museum.name as museum_name , work.artist_id, work.name as work_n, artist.full_name as artist_name from museum join work on
+museum.museum_id=work.museum_id join artist on 
+work.artist_id=artist.artist_id) as fam_artist  
+group by artist_name order by c_country desc; #where count>1 apply by yourself
+
+
+select * from work;
+select * from museum;
+
+-- select ... should functionally dependent on columns in GROUP BY clause
+-- If you want compatibility for old queries, you can turn off the only_full_group_by SQL mode.
+-- when you upgrade the mysql 5.7 you suddenly get this only_full_group_by issue by default . set sql_mode='' in my.cnf solves the issue
+SET sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));
+
+
+select w.name, m.country, m.museum_id, count(m.country) as cnt from work as w join museum as m on
+w.museum_id=m.museum_id group by m.museum_id order by cnt desc; #paintings count
+
+#Which country has 5th highest no. of paintings - get paintings from work and join museum through museum_id and group by country desc order then apply condition 
+
+select m.country, count(m.country) as cnt from work as w join museum as m on
+w.museum_id=m.museum_id group by country order by cnt desc;
