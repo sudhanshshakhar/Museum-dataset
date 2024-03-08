@@ -20,30 +20,74 @@
 <li>Which are the 3 most popular and 3 least popular painting styles?</li>
 <li>Which artist has the most no. of painting outside the USA? Display the artist's name, no. of painting, and the artist's nationality.</li>
 
-<h1>Schema<h2>
-<h2>List of Column Names from all tables </h2>
+<h2><b>Schema and ERF</b></h2> (Table and column name/def.)
 
-<b>artist</b>- 
-artist_id , full_name , first_name , middle_names , last_name , nationality ,style , birth , death
+artist
+- 
+`artist_id` int PK FK >- work.artist_id</br>
+`full_name` text </br>
+`first_name` text</br>
+`middle_names` text</br>
+`last_name` text</br>
+`nationality` text</br>
+`style` text</br>
+`birth` int</br>
+`death` int</br>
 
-<b>canvas_size</b>- 
-size_id , width , height , label
+canvas_size
+-
+`size_id` int PK FK >- product_size.size_id</br>
+`width` int </br>
+`height` text </br>
+`label` text</br>
 
-<b>image_link</b>- 
-work_id , url , thumbnail_small_url , thumbnail_large_url
+image_link
+-
+`work_id` int</br>
+`url` text </br>
+`thumbnail_small_url` text </br>
+`thumbnail_large_url` text</br>
 
-<b>museum</b>- 
-museum_id , name , address , city , state , postal , country , phone , url
+museum
+-
+`museum_id` int PK FK >- museum_hours.museum_id</br>
+`name` text </br>
+`address` text </br>
+`city` text </br>
+`state` text </br>
+`postal` text </br>
+`country` text </br>
+`phone` text </br>
+`url` text</br>
 
-<b>museum_hours</b>- 
-museum_id , day , open , close
+museum_hours
+-
+`museum_id` int FK >- work.museum_id</br>
+`day` text</br>
+`open` text </br>
+`close` text</br>
 
-<b>product_size</b>- 
-work_id , size_id , sale_price , regular_price
+product_size
+-
+`work_id` int PK FK >- image_link.work_id </br>
+`size_id` int </br>
+`sale_price` int </br>
+`regular_price` int</br>
 
-<b>subject</b>- 
-work_id , subject
+subject
+-
+`work_id` int PK FK >- image_link.work_id</br>
+`subject` text</br>
 
-<b>work</b>- 
-work_id , name , artist_id , style , museum_id
+work
+-
+`work_id` int PK FK >- subject.work_id</br>
+`name` text </br>
+`artist_id` int </br>
+`style text` </br>
+`museum_id` int</br>
+
+![Screenshot 2024-03-08 134304](https://github.com/sudhanshshakhar/Museum_dataset_SQL/assets/159720338/fe6f8859-b59c-4c92-a45b-89a021ffdd4f)
+
+
 
